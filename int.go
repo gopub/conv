@@ -21,7 +21,7 @@ func ToInt(i interface{}) (int, error) {
 		return 0, fmt.Errorf("cannot convert %v to int", i)
 	}
 	if n > MaxInt || n < MinInt {
-		return 0, fmt.Errorf("value %d out of range", n)
+		return 0, strconv.ErrRange
 	}
 	return int(n), nil
 }
@@ -31,8 +31,8 @@ func ToInt8(i interface{}) (int8, error) {
 	if err != nil {
 		return 0, fmt.Errorf("cannot convert %v to int8", i)
 	}
-	if n > math.MaxInt8 {
-		return 0, fmt.Errorf("value %d out of range", n)
+	if n > math.MaxInt8 || n < math.MinInt8 {
+		return 0, strconv.ErrRange
 	}
 	return int8(n), nil
 }
@@ -42,8 +42,8 @@ func ToInt16(i interface{}) (int16, error) {
 	if err != nil {
 		return 0, fmt.Errorf("cannot convert %v to int16", i)
 	}
-	if n > math.MaxInt16 {
-		return 0, fmt.Errorf("value %d out of range", n)
+	if n > math.MaxInt16 || n < math.MinInt16 {
+		return 0, strconv.ErrRange
 	}
 	return int16(n), nil
 }
@@ -53,8 +53,8 @@ func ToInt32(i interface{}) (int32, error) {
 	if err != nil {
 		return 0, fmt.Errorf("cannot convert %v to int32", i)
 	}
-	if n > math.MaxInt32 {
-		return 0, fmt.Errorf("value %d out of range", n)
+	if n > math.MaxInt32 || n < math.MinInt32 {
+		return 0, strconv.ErrRange
 	}
 	return int32(n), nil
 }
@@ -79,7 +79,7 @@ func ToInt64(i interface{}) (int64, error) {
 	case reflect.Uint64:
 		n := v.Uint()
 		if n > math.MaxInt64 {
-			return 0, fmt.Errorf("value %d out of range", n)
+			return 0, strconv.ErrRange
 		}
 		return int64(n), nil
 	case reflect.String:
@@ -105,7 +105,7 @@ func ToUint(i interface{}) (uint, error) {
 		return 0, fmt.Errorf("cannot convert %v to uint", i)
 	}
 	if n > MaxUint {
-		return 0, fmt.Errorf("value %d out of range", n)
+		return 0, strconv.ErrRange
 	}
 	return uint(n), nil
 }
@@ -116,7 +116,7 @@ func ToUint8(i interface{}) (uint8, error) {
 		return 0, fmt.Errorf("cannot convert %v to uint8", i)
 	}
 	if n > math.MaxUint8 {
-		return 0, fmt.Errorf("value %d out of range", n)
+		return 0, strconv.ErrRange
 	}
 	return uint8(n), nil
 }
@@ -127,7 +127,7 @@ func ToUint16(i interface{}) (uint16, error) {
 		return 0, fmt.Errorf("cannot convert %v to uint16", i)
 	}
 	if n > math.MaxUint16 {
-		return 0, fmt.Errorf("value %d out of range", n)
+		return 0, strconv.ErrRange
 	}
 	return uint16(n), nil
 }
@@ -138,7 +138,7 @@ func ToUint32(i interface{}) (uint32, error) {
 		return 0, fmt.Errorf("cannot convert %v to uint32", i)
 	}
 	if n > math.MaxUint32 {
-		return 0, fmt.Errorf("value %d out of range", n)
+		return 0, strconv.ErrRange
 	}
 	return uint32(n), nil
 }
@@ -157,13 +157,13 @@ func ToUint64(i interface{}) (uint64, error) {
 	case reflect.Float32, reflect.Float64:
 		f := v.Float()
 		if f < 0 {
-			return 0, fmt.Errorf("cannot convert %f to uint64", f)
+			return 0, strconv.ErrRange
 		}
 		return uint64(f), nil
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		n := v.Int()
 		if n < 0 {
-			return 0, fmt.Errorf("cannot convert %d to uint64", n)
+			return 0, strconv.ErrRange
 		}
 		return uint64(n), nil
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
@@ -172,7 +172,7 @@ func ToUint64(i interface{}) (uint64, error) {
 		n, err := strconv.ParseInt(v.String(), 0, 64)
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("cannot convert %d to uint64", n)
+				return 0, strconv.ErrRange
 			}
 			return uint64(n), nil
 		}
@@ -181,7 +181,7 @@ func ToUint64(i interface{}) (uint64, error) {
 		}
 		if f, fErr := strconv.ParseFloat(v.String(), 64); fErr == nil {
 			if f < 0 {
-				return 0, fmt.Errorf("cannot convert %f to uint64", f)
+				return 0, strconv.ErrRange
 			}
 			return uint64(f), nil
 		}

@@ -13,7 +13,7 @@ func ToFloat32(i interface{}) (float32, error) {
 		return 0, fmt.Errorf("cannot convert %v to float32", i)
 	}
 	if v > math.MaxFloat32 || v < -math.MaxFloat32 {
-		return 0, fmt.Errorf("value %f out of range", v)
+		return 0, strconv.ErrRange
 	}
 	return float32(v), nil
 }
