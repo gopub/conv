@@ -35,3 +35,27 @@ func ToString(i interface{}) (string, error) {
 	}
 	return "", fmt.Errorf("cannot convert %v to string", i)
 }
+
+func ToStringSlice(i interface{}) ([]string, error) {
+	i = indirect(i)
+	if i == nil {
+		return nil, nil
+	}
+	if l, ok := i.([]string); ok {
+		return l, nil
+	}
+	v := reflect.ValueOf(i)
+	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+		return nil, fmt.Errorf("cannot convert %v to slice", v.Kind())
+	}
+	num := v.Len()
+	res := make([]string, num)
+	var err error
+	for j := 0; j < num; j++ {
+		res[j], err = ToString(v.Index(j))
+		if err != nil {
+			return nil, fmt.Errorf("convert index %d: %w", i, err)
+		}
+	}
+	return res, nil
+}

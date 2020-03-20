@@ -190,3 +190,99 @@ func ToUint64(i interface{}) (uint64, error) {
 		return 0, fmt.Errorf("cannot convert %v to uint64", i)
 	}
 }
+
+func ToIntSlice(i interface{}) ([]int, error) {
+	i = indirect(i)
+	if i == nil {
+		return nil, nil
+	}
+	if l, ok := i.([]int); ok {
+		return l, nil
+	}
+	v := reflect.ValueOf(i)
+	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+		return nil, fmt.Errorf("cannot convert %v to slice", v.Kind())
+	}
+	num := v.Len()
+	res := make([]int, num)
+	var err error
+	for j := 0; j < num; j++ {
+		res[j], err = ToInt(v.Index(j))
+		if err != nil {
+			return nil, fmt.Errorf("convert index %d: %w", i, err)
+		}
+	}
+	return res, nil
+}
+
+func ToInt64Slice(i interface{}) ([]int64, error) {
+	i = indirect(i)
+	if i == nil {
+		return nil, nil
+	}
+	if l, ok := i.([]int64); ok {
+		return l, nil
+	}
+	v := reflect.ValueOf(i)
+	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+		return nil, fmt.Errorf("cannot convert %v to slice", v.Kind())
+	}
+	num := v.Len()
+	res := make([]int64, num)
+	var err error
+	for j := 0; j < num; j++ {
+		res[j], err = ToInt64(v.Index(j))
+		if err != nil {
+			return nil, fmt.Errorf("convert index %d: %w", i, err)
+		}
+	}
+	return res, nil
+}
+
+func ToUintSlice(i interface{}) ([]uint, error) {
+	i = indirect(i)
+	if i == nil {
+		return nil, nil
+	}
+	if l, ok := i.([]uint); ok {
+		return l, nil
+	}
+	v := reflect.ValueOf(i)
+	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+		return nil, fmt.Errorf("cannot convert %v to slice", v.Kind())
+	}
+	num := v.Len()
+	res := make([]uint, num)
+	var err error
+	for j := 0; j < num; j++ {
+		res[j], err = ToUint(v.Index(j))
+		if err != nil {
+			return nil, fmt.Errorf("convert index %d: %w", i, err)
+		}
+	}
+	return res, nil
+}
+
+func ToUint64Slice(i interface{}) ([]uint64, error) {
+	i = indirect(i)
+	if i == nil {
+		return nil, nil
+	}
+	if l, ok := i.([]uint64); ok {
+		return l, nil
+	}
+	v := reflect.ValueOf(i)
+	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+		return nil, fmt.Errorf("cannot convert %v to slice", v.Kind())
+	}
+	num := v.Len()
+	res := make([]uint64, num)
+	var err error
+	for j := 0; j < num; j++ {
+		res[j], err = ToUint64(v.Index(j))
+		if err != nil {
+			return nil, fmt.Errorf("convert index %d: %w", i, err)
+		}
+	}
+	return res, nil
+}
