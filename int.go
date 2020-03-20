@@ -3,6 +3,7 @@ package conv
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math"
 	"reflect"
 	"strconv"
@@ -26,6 +27,14 @@ func ToInt(i interface{}) (int, error) {
 	return int(n), nil
 }
 
+func MustInt(i interface{}) int {
+	v, err := ToInt(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
+}
+
 func ToInt8(i interface{}) (int8, error) {
 	n, err := ToInt64(i)
 	if err != nil {
@@ -35,6 +44,14 @@ func ToInt8(i interface{}) (int8, error) {
 		return 0, strconv.ErrRange
 	}
 	return int8(n), nil
+}
+
+func MustInt8(i interface{}) int8 {
+	v, err := ToInt8(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
 }
 
 func ToInt16(i interface{}) (int16, error) {
@@ -48,6 +65,14 @@ func ToInt16(i interface{}) (int16, error) {
 	return int16(n), nil
 }
 
+func MustInt16(i interface{}) int16 {
+	v, err := ToInt16(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
+}
+
 func ToInt32(i interface{}) (int32, error) {
 	n, err := ToInt64(i)
 	if err != nil {
@@ -59,10 +84,18 @@ func ToInt32(i interface{}) (int32, error) {
 	return int32(n), nil
 }
 
+func MustInt32(i interface{}) int32 {
+	v, err := ToInt32(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
+}
+
 func ToInt64(i interface{}) (int64, error) {
 	i = indirect(i)
 	if i == nil {
-		return 0, fmt.Errorf("cannot convert %v to int64", i)
+		return 0, errors.New("cannot convert nil to int64")
 	}
 	switch v := reflect.ValueOf(i); v.Kind() {
 	case reflect.Bool:
@@ -99,6 +132,14 @@ func ToInt64(i interface{}) (int64, error) {
 	}
 }
 
+func MustInt64(i interface{}) int64 {
+	v, err := ToInt64(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
+}
+
 func ToUint(i interface{}) (uint, error) {
 	n, err := ToUint64(i)
 	if err != nil {
@@ -108,6 +149,14 @@ func ToUint(i interface{}) (uint, error) {
 		return 0, strconv.ErrRange
 	}
 	return uint(n), nil
+}
+
+func MustUint(i interface{}) uint {
+	v, err := ToUint(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
 }
 
 func ToUint8(i interface{}) (uint8, error) {
@@ -121,6 +170,14 @@ func ToUint8(i interface{}) (uint8, error) {
 	return uint8(n), nil
 }
 
+func MustUint8(i interface{}) uint8 {
+	v, err := ToUint8(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
+}
+
 func ToUint16(i interface{}) (uint16, error) {
 	n, err := ToUint64(i)
 	if err != nil {
@@ -130,6 +187,14 @@ func ToUint16(i interface{}) (uint16, error) {
 		return 0, strconv.ErrRange
 	}
 	return uint16(n), nil
+}
+
+func MustUint16(i interface{}) uint16 {
+	v, err := ToUint16(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
 }
 
 func ToUint32(i interface{}) (uint32, error) {
@@ -143,10 +208,18 @@ func ToUint32(i interface{}) (uint32, error) {
 	return uint32(n), nil
 }
 
+func MustUint32(i interface{}) uint32 {
+	v, err := ToUint32(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
+}
+
 func ToUint64(i interface{}) (uint64, error) {
 	i = indirect(i)
 	if i == nil {
-		return 0, fmt.Errorf("cannot convert %v to uint64", i)
+		return 0, errors.New("cannot convert nil to uint64")
 	}
 	switch v := reflect.ValueOf(i); v.Kind() {
 	case reflect.Bool:
@@ -191,6 +264,14 @@ func ToUint64(i interface{}) (uint64, error) {
 	}
 }
 
+func MustUint64(i interface{}) uint64 {
+	v, err := ToUint64(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
+}
+
 func ToIntSlice(i interface{}) ([]int, error) {
 	i = indirect(i)
 	if i == nil {
@@ -213,6 +294,14 @@ func ToIntSlice(i interface{}) ([]int, error) {
 		}
 	}
 	return res, nil
+}
+
+func MustIntSlice(i interface{}) []int {
+	v, err := ToIntSlice(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
 }
 
 func ToInt64Slice(i interface{}) ([]int64, error) {
@@ -239,6 +328,14 @@ func ToInt64Slice(i interface{}) ([]int64, error) {
 	return res, nil
 }
 
+func MustInt64Slice(i interface{}) []int64 {
+	v, err := ToInt64Slice(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
+}
+
 func ToUintSlice(i interface{}) ([]uint, error) {
 	i = indirect(i)
 	if i == nil {
@@ -263,6 +360,14 @@ func ToUintSlice(i interface{}) ([]uint, error) {
 	return res, nil
 }
 
+func MustUintSlice(i interface{}) []uint {
+	v, err := ToUintSlice(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
+}
+
 func ToUint64Slice(i interface{}) ([]uint64, error) {
 	i = indirect(i)
 	if i == nil {
@@ -285,4 +390,12 @@ func ToUint64Slice(i interface{}) ([]uint64, error) {
 		}
 	}
 	return res, nil
+}
+
+func MustUint64Slice(i interface{}) []uint64 {
+	v, err := ToUint64Slice(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
 }

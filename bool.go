@@ -2,6 +2,7 @@ package conv
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 	"strconv"
 )
@@ -29,4 +30,12 @@ func ToBool(i interface{}) (bool, error) {
 		return false, fmt.Errorf("cannot convert %v to bool", i)
 	}
 	return n != 0, nil
+}
+
+func MustBool(i interface{}) bool {
+	v, err := ToBool(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
 }

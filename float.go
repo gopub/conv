@@ -1,7 +1,9 @@
 package conv
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"math"
 	"reflect"
 	"strconv"
@@ -10,7 +12,7 @@ import (
 func ToFloat32(i interface{}) (float32, error) {
 	v, err := ToFloat64(i)
 	if err != nil {
-		return 0, fmt.Errorf("cannot convert %v to float32", i)
+		return 0, errors.New("cannot convert nil to float32")
 	}
 	if v > math.MaxFloat32 || v < -math.MaxFloat32 {
 		return 0, strconv.ErrRange
@@ -18,10 +20,17 @@ func ToFloat32(i interface{}) (float32, error) {
 	return float32(v), nil
 }
 
+func MustFloat32(i interface{}) float32 {
+	v, err := ToFloat32(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
+}
 func ToFloat64(i interface{}) (float64, error) {
 	i = indirect(i)
 	if i == nil {
-		return 0, fmt.Errorf("cannot convert %v to float64", i)
+		return 0, errors.New("cannot convert nil to float64")
 	}
 	v := reflect.ValueOf(i)
 	switch v.Kind() {
@@ -45,6 +54,14 @@ func ToFloat64(i interface{}) (float64, error) {
 	default:
 		return 0, fmt.Errorf("cannot convert %v to float64", i)
 	}
+}
+
+func MustFloat64(i interface{}) float64 {
+	v, err := ToFloat64(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
 }
 
 func ToFloat32Slice(i interface{}) ([]float32, error) {
@@ -71,6 +88,14 @@ func ToFloat32Slice(i interface{}) ([]float32, error) {
 	return res, nil
 }
 
+func MustFloat32Slice(i interface{}) []float32 {
+	v, err := ToFloat32Slice(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
+}
+
 func ToFloat64Slice(i interface{}) ([]float64, error) {
 	i = indirect(i)
 	if i == nil {
@@ -93,4 +118,12 @@ func ToFloat64Slice(i interface{}) ([]float64, error) {
 		}
 	}
 	return res, nil
+}
+
+func MustFloat64Slice(i interface{}) []float64 {
+	v, err := ToFloat64Slice(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
 }

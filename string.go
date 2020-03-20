@@ -2,6 +2,7 @@ package conv
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 )
 
@@ -36,6 +37,14 @@ func ToString(i interface{}) (string, error) {
 	return "", fmt.Errorf("cannot convert %v to string", i)
 }
 
+func MustString(i interface{}) string {
+	v, err := ToString(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
+}
+
 func ToStringSlice(i interface{}) ([]string, error) {
 	i = indirect(i)
 	if i == nil {
@@ -58,4 +67,12 @@ func ToStringSlice(i interface{}) ([]string, error) {
 		}
 	}
 	return res, nil
+}
+
+func MustStringSlice(i interface{}) []string {
+	v, err := ToStringSlice(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	return v
 }
