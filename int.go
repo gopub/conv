@@ -64,6 +64,13 @@ func ToInt64(i interface{}) (int64, error) {
 		return 0, fmt.Errorf("cannot convert %v to int64", i)
 	}
 	switch v := reflect.ValueOf(i); v.Kind() {
+	case reflect.Bool:
+		if v.Bool() {
+			return 1, nil
+		}
+		return 0, nil
+	case reflect.Float32, reflect.Float64:
+		return int64(v.Float()), nil
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		return v.Int(), nil
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32:
@@ -74,8 +81,6 @@ func ToInt64(i interface{}) (int64, error) {
 			return 0, fmt.Errorf("value %d out of range", n)
 		}
 		return int64(n), nil
-	case reflect.Float32, reflect.Float64:
-		return int64(v.Float()), nil
 	case reflect.String:
 		n, err := strconv.ParseInt(v.String(), 0, 64)
 		if err == nil {
@@ -140,14 +145,6 @@ func ToUint64(i interface{}) (uint64, error) {
 		return 0, fmt.Errorf("cannot convert %v to uint64", i)
 	}
 	switch v := reflect.ValueOf(i); v.Kind() {
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		n := v.Int()
-		if n < 0 {
-			return 0, fmt.Errorf("cannot convert %d to uint64", n)
-		}
-		return uint64(n), nil
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return v.Uint(), nil
 	case reflect.Bool:
 		if v.Bool() {
 			return 1, nil
@@ -159,6 +156,14 @@ func ToUint64(i interface{}) (uint64, error) {
 			return 0, fmt.Errorf("cannot convert %f to uint64", f)
 		}
 		return uint64(f), nil
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		n := v.Int()
+		if n < 0 {
+			return 0, fmt.Errorf("cannot convert %d to uint64", n)
+		}
+		return uint64(n), nil
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return v.Uint(), nil
 	case reflect.String:
 		n, err := strconv.ParseInt(v.String(), 0, 64)
 		if err == nil {

@@ -10,7 +10,7 @@ import (
 
 func TestToBool(t *testing.T) {
 	type Bool bool
-	type Num int
+	type Int int
 	goodCases := []struct {
 		Value  interface{}
 		Result bool
@@ -76,11 +76,11 @@ func TestToBool(t *testing.T) {
 			false,
 		},
 		{
-			Num(100),
+			Int(100),
 			true,
 		},
 		{
-			Num(0),
+			Int(0),
 			false,
 		},
 		{
