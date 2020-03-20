@@ -1,6 +1,7 @@
 package conv
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"reflect"
@@ -85,6 +86,9 @@ func ToInt64(i interface{}) (int64, error) {
 		n, err := strconv.ParseInt(v.String(), 0, 64)
 		if err == nil {
 			return n, nil
+		}
+		if errors.Is(err, strconv.ErrRange) {
+			return 0, err
 		}
 		if f, fErr := strconv.ParseFloat(v.String(), 64); fErr == nil {
 			return int64(f), nil
@@ -171,6 +175,9 @@ func ToUint64(i interface{}) (uint64, error) {
 				return 0, fmt.Errorf("cannot convert %d to uint64", n)
 			}
 			return uint64(n), nil
+		}
+		if errors.Is(err, strconv.ErrRange) {
+			return 0, err
 		}
 		if f, fErr := strconv.ParseFloat(v.String(), 64); fErr == nil {
 			if f < 0 {
