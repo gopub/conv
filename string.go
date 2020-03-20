@@ -9,7 +9,7 @@ import (
 func ToString(i interface{}) (string, error) {
 	i = indirectToStringerOrError(i)
 	if i == nil {
-		return "", fmt.Errorf("cannot convert nil to string")
+		return "", errNilValue
 	}
 	switch v := i.(type) {
 	case string:
@@ -34,7 +34,7 @@ func ToString(i interface{}) (string, error) {
 			return string(v.Bytes()), nil
 		}
 	}
-	return "", fmt.Errorf("cannot convert %v to string", i)
+	return "", fmt.Errorf("cannot convert %v", v.Kind())
 }
 
 func MustString(i interface{}) string {
@@ -55,15 +55,15 @@ func ToStringSlice(i interface{}) ([]string, error) {
 	}
 	v := reflect.ValueOf(i)
 	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
-		return nil, fmt.Errorf("cannot convert %v to slice", v.Kind())
+		return nil, errNotSlice
 	}
 	num := v.Len()
 	res := make([]string, num)
 	var err error
 	for j := 0; j < num; j++ {
-		res[j], err = ToString(v.Index(j))
+		res[j], err = ToString(v.Index(j).Interface())
 		if err != nil {
-			return nil, fmt.Errorf("convert index %d: %w", i, err)
+			return nil, fmt.Errorf("convert element at index %d: %w", i, err)
 		}
 	}
 	return res, nil

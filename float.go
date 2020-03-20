@@ -80,7 +80,7 @@ func ToFloat32Slice(i interface{}) ([]float32, error) {
 	res := make([]float32, num)
 	var err error
 	for j := 0; j < num; j++ {
-		res[j], err = ToFloat32(v.Index(j))
+		res[j], err = ToFloat32(v.Index(j).Interface())
 		if err != nil {
 			return nil, fmt.Errorf("convert index %d: %w", i, err)
 		}
@@ -106,13 +106,13 @@ func ToFloat64Slice(i interface{}) ([]float64, error) {
 	}
 	v := reflect.ValueOf(i)
 	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
-		return nil, fmt.Errorf("cannot convert %v to slice", v.Kind())
+		return nil, errNotSlice
 	}
 	num := v.Len()
 	res := make([]float64, num)
 	var err error
 	for j := 0; j < num; j++ {
-		res[j], err = ToFloat64(v.Index(j))
+		res[j], err = ToFloat64(v.Index(j).Interface())
 		if err != nil {
 			return nil, fmt.Errorf("convert index %d: %w", i, err)
 		}

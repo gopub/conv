@@ -1,6 +1,8 @@
 package conv_test
 
 import (
+	"encoding/json"
+	"github.com/stretchr/testify/require"
 	"math"
 	"testing"
 	"time"
@@ -245,5 +247,19 @@ func TestToUint64(t *testing.T) {
 			assert.Error(t, err, c)
 			assert.Empty(t, res)
 		}
+	})
+}
+
+func TestToIntSlice(t *testing.T) {
+	t.Run("good", func(t *testing.T) {
+		l := []interface{}{"1", 12, -13.9, json.Number("100")}
+		res, err := conv.ToIntSlice(l)
+		require.NoError(t, err)
+		require.Equal(t, []int{1, 12, -13, 100}, res)
+	})
+	t.Run("nil", func(t *testing.T) {
+		res, err := conv.ToIntSlice(nil)
+		require.NoError(t, err)
+		require.Empty(t, res)
 	})
 }
