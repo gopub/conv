@@ -31,7 +31,7 @@ func TestSnakeToCamel(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		assert.Equal(t, tc.Output, conv.SnakeToCamel(tc.Input))
+		assert.Equal(t, tc.Output, conv.ToCamel(tc.Input))
 	}
 }
 
@@ -55,6 +55,6 @@ func TestCamelToSnake(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		assert.Equal(t, tc.Output, conv.CamelToSnake(tc.Input))
+		assert.Equal(t, tc.Output, conv.ToSnake(tc.Input))
 	}
 }

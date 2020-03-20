@@ -1,6 +1,6 @@
 package conv
 
-func CamelToSnake(s string) string {
+func ToSnake(s string) string {
 	snake := make([]rune, 0, len(s)+1)
 	flag := false
 	k := 'a' - 'A'
@@ -21,7 +21,7 @@ func CamelToSnake(s string) string {
 	return string(snake)
 }
 
-func SnakeToCamel(s string) string {
+func ToCamel(s string) string {
 	camel := make([]rune, 0, len(s)+1)
 	flag := false
 	k := 'A' - 'a'
