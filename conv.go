@@ -7,7 +7,6 @@ import (
 )
 
 var errNilValue = errors.New("value is nil")
-var errNotSlice = errors.New("value is not slice or array")
 
 // From html/template/content.go
 // Copyright 2011 The Go Authors. All rights reserved.

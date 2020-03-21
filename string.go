@@ -34,7 +34,7 @@ func ToString(i interface{}) (string, error) {
 			return string(v.Bytes()), nil
 		}
 	}
-	return "", fmt.Errorf("cannot convert %v", v.Kind())
+	return "", fmt.Errorf("cannot convert %#v of type %T to string", i, i)
 }
 
 func MustString(i interface{}) string {
@@ -55,7 +55,7 @@ func ToStringSlice(i interface{}) ([]string, error) {
 	}
 	v := reflect.ValueOf(i)
 	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
-		return nil, errNotSlice
+		return nil, fmt.Errorf("cannot convert %#v of type %T to []string", i, i)
 	}
 	num := v.Len()
 	res := make([]string, num)

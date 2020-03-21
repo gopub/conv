@@ -20,5 +20,5 @@ func ToBytes(i interface{}) ([]byte, error) {
 	if v.Kind() == reflect.Slice && v.Type().Elem().Kind() == reflect.Uint8 {
 		return v.Bytes(), nil
 	}
-	return nil, fmt.Errorf("cannot convert %v", v.Kind())
+	return nil, fmt.Errorf("cannot convert %#v of type %T to []byte", i, i)
 }

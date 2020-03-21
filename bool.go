@@ -27,7 +27,7 @@ func ToBool(i interface{}) (bool, error) {
 
 	n, err := parseInt64(i)
 	if err != nil {
-		return false, fmt.Errorf("cannot convert %v", reflect.ValueOf(i).Kind())
+		return false, fmt.Errorf("cannot convert %#v of type %T to bool", i, i)
 	}
 	return n != 0, nil
 }
@@ -50,7 +50,7 @@ func ToBoolSlice(i interface{}) ([]bool, error) {
 	}
 	v := reflect.ValueOf(i)
 	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
-		return nil, errNotSlice
+		return nil, fmt.Errorf("cannot convert %#v of type %T to []bool", i, i)
 	}
 	num := v.Len()
 	res := make([]bool, num)

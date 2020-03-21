@@ -19,7 +19,7 @@ const (
 func ToInt(i interface{}) (int, error) {
 	n, err := parseInt64(i)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("cannot convert %#v of type %T to int64", i, i)
 	}
 	if n > MaxInt || n < MinInt {
 		return 0, strconv.ErrRange
@@ -38,7 +38,7 @@ func MustInt(i interface{}) int {
 func ToInt8(i interface{}) (int8, error) {
 	n, err := parseInt64(i)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("cannot convert %#v of type %T to int8", i, i)
 	}
 	if n > math.MaxInt8 || n < math.MinInt8 {
 		return 0, strconv.ErrRange
@@ -57,7 +57,7 @@ func MustInt8(i interface{}) int8 {
 func ToInt16(i interface{}) (int16, error) {
 	n, err := parseInt64(i)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("cannot convert %#v of type %T to int16", i, i)
 	}
 	if n > math.MaxInt16 || n < math.MinInt16 {
 		return 0, strconv.ErrRange
@@ -76,7 +76,7 @@ func MustInt16(i interface{}) int16 {
 func ToInt32(i interface{}) (int32, error) {
 	n, err := parseInt64(i)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("cannot convert %#v of type %T to int32", i, i)
 	}
 	if n > math.MaxInt32 || n < math.MinInt32 {
 		return 0, strconv.ErrRange
@@ -107,7 +107,7 @@ func MustInt64(i interface{}) int64 {
 func ToUint(i interface{}) (uint, error) {
 	n, err := parseUint64(i)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("cannot convert %#v of type %T to uint", i, i)
 	}
 	if n > MaxUint {
 		return 0, strconv.ErrRange
@@ -126,7 +126,7 @@ func MustUint(i interface{}) uint {
 func ToUint8(i interface{}) (uint8, error) {
 	n, err := parseUint64(i)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("cannot convert %#v of type %T to uint8", i, i)
 	}
 	if n > math.MaxUint8 {
 		return 0, strconv.ErrRange
@@ -145,7 +145,7 @@ func MustUint8(i interface{}) uint8 {
 func ToUint16(i interface{}) (uint16, error) {
 	n, err := parseUint64(i)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("cannot convert %#v of type %T to uint16", i, i)
 	}
 	if n > math.MaxUint16 {
 		return 0, strconv.ErrRange
@@ -164,7 +164,7 @@ func MustUint16(i interface{}) uint16 {
 func ToUint32(i interface{}) (uint32, error) {
 	n, err := parseUint64(i)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("cannot convert %#v of type %T to uint32", i, i)
 	}
 	if n > math.MaxUint32 {
 		return 0, strconv.ErrRange
@@ -234,7 +234,7 @@ func ToInt64Slice(i interface{}) ([]int64, error) {
 	}
 	v := reflect.ValueOf(i)
 	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
-		return nil, errNotSlice
+		return nil, fmt.Errorf("cannot convert %#v of type %T to []int64", i, i)
 	}
 	num := v.Len()
 	res := make([]int64, num)
@@ -266,7 +266,7 @@ func ToUintSlice(i interface{}) ([]uint, error) {
 	}
 	v := reflect.ValueOf(i)
 	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
-		return nil, errNotSlice
+		return nil, fmt.Errorf("cannot convert %#v of type %T to []uint", i, i)
 	}
 	num := v.Len()
 	res := make([]uint, num)
@@ -298,7 +298,7 @@ func ToUint64Slice(i interface{}) ([]uint64, error) {
 	}
 	v := reflect.ValueOf(i)
 	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
-		return nil, errNotSlice
+		return nil, fmt.Errorf("cannot convert %#v of type %T to []uint64", i, i)
 	}
 	num := v.Len()
 	res := make([]uint64, num)
@@ -356,7 +356,7 @@ func parseInt64(i interface{}) (int64, error) {
 		}
 		return 0, err
 	default:
-		return 0, fmt.Errorf("cannot convert %v", v.Kind())
+		return 0, strconv.ErrSyntax
 	}
 }
 
@@ -404,6 +404,6 @@ func parseUint64(i interface{}) (uint64, error) {
 		}
 		return 0, err
 	default:
-		return 0, fmt.Errorf("cannot convert %v", v.Kind())
+		return 0, strconv.ErrSyntax
 	}
 }
