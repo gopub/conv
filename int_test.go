@@ -2,10 +2,11 @@ package conv_test
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/require"
 	"math"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/gopub/conv"
 	"github.com/stretchr/testify/assert"
