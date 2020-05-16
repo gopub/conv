@@ -73,6 +73,10 @@ func TestToInt64(t *testing.T) {
 			Bool(false),
 			0,
 		},
+		{
+			[]byte("12"),
+			12,
+		},
 	}
 
 	t.Run("Good", func(t *testing.T) {
@@ -227,6 +231,10 @@ func TestToUint64(t *testing.T) {
 		{
 			Bool(false),
 			0,
+		},
+		{
+			[]byte("12"),
+			12,
 		},
 	}
 

@@ -325,6 +325,9 @@ func parseInt64(i interface{}) (int64, error) {
 	if i == nil {
 		return 0, errNilValue
 	}
+	if b, ok := i.([]byte); ok {
+		i = string(b)
+	}
 	switch v := reflect.ValueOf(i); v.Kind() {
 	case reflect.Bool:
 		if v.Bool() {
@@ -364,6 +367,9 @@ func parseUint64(i interface{}) (uint64, error) {
 	i = indirect(i)
 	if i == nil {
 		return 0, errNilValue
+	}
+	if b, ok := i.([]byte); ok {
+		i = string(b)
 	}
 	switch v := reflect.ValueOf(i); v.Kind() {
 	case reflect.Bool:
