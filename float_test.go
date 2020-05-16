@@ -71,6 +71,10 @@ func TestToFloat64(t *testing.T) {
 			Bool(false),
 			0,
 		},
+		{
+			[]byte("123.309"),
+			123.309,
+		},
 	}
 
 	t.Run("Good", func(t *testing.T) {

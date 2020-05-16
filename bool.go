@@ -18,6 +18,9 @@ func ToBool(i interface{}) (bool, error) {
 		return strconv.ParseBool(v)
 	}
 
+	if b, ok := i.([]byte); ok {
+		i = string(b)
+	}
 	switch v := reflect.ValueOf(i); v.Kind() {
 	case reflect.Bool:
 		return v.Bool(), nil

@@ -99,6 +99,10 @@ func TestToBool(t *testing.T) {
 			"F",
 			false,
 		},
+		{
+			[]byte("true"),
+			true,
+		},
 	}
 
 	t.Run("Good", func(t *testing.T) {

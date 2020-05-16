@@ -31,6 +31,10 @@ func ToFloat64(i interface{}) (float64, error) {
 	if i == nil {
 		return 0, errNilValue
 	}
+
+	if b, ok := i.([]byte); ok {
+		i = string(b)
+	}
 	v := reflect.ValueOf(i)
 	switch v.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32:
