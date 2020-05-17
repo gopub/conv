@@ -2,6 +2,7 @@ package conv
 
 import (
 	"encoding"
+	"encoding/json"
 	"fmt"
 	"reflect"
 )
@@ -24,6 +25,14 @@ func SetBytes(target interface{}, b []byte) error {
 		err := bu.UnmarshalBinary(b)
 		if err != nil {
 			return fmt.Errorf("unmarshal binary: %w", err)
+		}
+		return nil
+	}
+
+	if ju, ok := target.(json.Unmarshaler); ok {
+		err := ju.UnmarshalJSON(b)
+		if err != nil {
+			return fmt.Errorf("unmarshal json: %w", err)
 		}
 		return nil
 	}
