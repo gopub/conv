@@ -2,6 +2,12 @@ github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/google/go-cmp v0.4.0 h1:xsAVV57WRhGj6kEIi8ReJzQlHHqcBYCElAvkovg3B/4=
 github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+github.com/gopub/conv v0.3.0/go.mod h1:OAog+Vown+go6heGhEj/5dcPE5JjHMIaus5kLvvnzxE=
+github.com/gopub/log v1.2.0/go.mod h1:N7GzW/a2tgyQp/wSwd9YzUN5AbVB2G1yE7+nZUGL46A=
+github.com/gopub/log v1.2.2 h1:qP0ZWysd8U+EzIpYzNDvBbwYj6JN2F4d7Pn90XOM+Kg=
+github.com/gopub/log v1.2.2/go.mod h1:N7GzW/a2tgyQp/wSwd9YzUN5AbVB2G1yE7+nZUGL46A=
+github.com/gopub/mapper v1.0.11 h1:CHD8UrzqnnwKHj/bCBu/u1h8c1nKfP5B8pQ2HqJk9rE=
+github.com/gopub/mapper v1.0.11/go.mod h1:r8gkpdekd0jwgw8LsWbnf8odbS+qoj6p1B8Kfga3mxQ=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
