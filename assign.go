@@ -1,6 +1,7 @@
 package conv
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
@@ -15,6 +16,9 @@ func Assign(dst interface{}, src interface{}) error {
 func AssignC(dst interface{}, src interface{}, checker NameChecker) error {
 	if dst == nil || src == nil || checker == nil {
 		panic(fmt.Sprintf("Cannot accept nil arguments: %v, %v, %v", dst, src, checker))
+	}
+	if data, err := json.Marshal(src); err == nil {
+		_ = json.Unmarshal(data, dst)
 	}
 	dv := indirectDstVal(reflect.ValueOf(dst), false)
 	// dv must be a nil pointer or a valid value
