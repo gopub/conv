@@ -22,6 +22,9 @@ func AssignC(dst interface{}, src interface{}, checker NameChecker) error {
 	if err != nil {
 		return fmt.Errorf("cannot assign %T to %T", src, dv.Interface())
 	}
+	if err = Validate(dst); err != nil {
+		return fmt.Errorf("cannot validate: %w", err)
+	}
 	return nil
 }
 
