@@ -21,6 +21,9 @@ func AssignC(dst interface{}, src interface{}, checker NameChecker) error {
 		_ = json.Unmarshal(data, dst)
 	}
 	dv := indirectDstVal(reflect.ValueOf(dst), false)
+	if !dv.CanSet() {
+		panic(fmt.Sprintf("Cannot assign dst: %v", dv.Kind()))
+	}
 	// dv must be a nil pointer or a valid value
 	err := assign(dv, reflect.ValueOf(src), checker)
 	if err != nil {
@@ -33,7 +36,6 @@ func AssignC(dst interface{}, src interface{}, checker NameChecker) error {
 }
 
 func indirectDstVal(v reflect.Value, populate bool) reflect.Value {
-	origin := v
 	for v.Kind() == reflect.Ptr {
 		if v.IsNil() {
 			if populate {
@@ -43,9 +45,6 @@ func indirectDstVal(v reflect.Value, populate bool) reflect.Value {
 			}
 		}
 		v = v.Elem()
-	}
-	if !v.CanSet() {
-		panic(fmt.Sprintf("Cannot assign: %v", origin))
 	}
 	return v
 }
@@ -69,6 +68,9 @@ func assign(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 
 	src = indirectSrcVal(src)
 	dv := indirectDstVal(dst, true)
+	if !dv.CanSet() {
+		panic(fmt.Sprintf("Cannot assign dst: %v", dv.Kind()))
+	}
 	switch dv.Kind() {
 	case reflect.Bool:
 		b, err := ToBool(src.Interface())
