@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
-
 	"github.com/gopub/log"
+	"reflect"
 )
 
 func Assign(dst interface{}, src interface{}) error {
@@ -239,6 +238,10 @@ func mapToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 				continue
 			}
 
+			if fsv.Interface() == nil {
+				continue
+			}
+
 			err := assign(fv, reflect.ValueOf(fsv.Interface()), nm)
 			if err != nil {
 				log.Warnf("Cannot assign %s: %v", ft.Name, err)
@@ -267,11 +270,11 @@ func structToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error 
 		for i := 0; i < src.NumField(); i++ {
 			sfv := src.Field(i)
 			sfName := src.Type().Field(i).Name
-			if sfv.IsValid() == false || sfName[0] < 'A' || sfName[0] > 'Z' {
+			if !sfv.IsValid() || sfv.Interface() == nil {
 				continue
 			}
 
-			if !nm.CheckName(sfName, ft.Name) {
+			if !isExported(sfName) || !nm.CheckName(sfName, ft.Name) {
 				continue
 			}
 
@@ -286,7 +289,7 @@ func structToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error 
 	for i := 0; i < src.NumField(); i++ {
 		sfv := src.Field(i)
 		sfName := src.Type().Field(i).Name
-		if sfv.IsValid() == false || sfName[0] < 'A' || sfName[0] > 'Z' {
+		if !sfv.IsValid() || sfv.Interface() == nil || !isExported(sfName) {
 			continue
 		}
 
@@ -295,4 +298,8 @@ func structToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error 
 		}
 	}
 	return nil
+}
+
+func isExported(name string) bool {
+	return name != "" && name[0] >= 'A' && name[0] <= 'Z'
 }
