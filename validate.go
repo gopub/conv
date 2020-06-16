@@ -26,6 +26,9 @@ func Validate(i interface{}) error {
 	if v.Kind() == reflect.Struct {
 		t := v.Type()
 		for j := 0; j < v.NumField(); j++ {
+			if !isExported(t.Field(j).Name) {
+				continue
+			}
 			if err := Validate(v.Field(j).Interface()); err != nil {
 				return fmt.Errorf("%s:%w", t.Field(j).Name, err)
 			}
