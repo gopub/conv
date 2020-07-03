@@ -30,7 +30,7 @@ func AbsFloat32(i float32) float32 {
 	return i
 }
 
-func AbsDuration(d time.Duration) time.Duration  {
+func AbsDuration(d time.Duration) time.Duration {
 	if d < 0 {
 		return -d
 	}

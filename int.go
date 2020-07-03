@@ -413,3 +413,29 @@ func parseUint64(i interface{}) (uint64, error) {
 		return 0, strconv.ErrSyntax
 	}
 }
+
+func ToUniqueIntSlice(a []int) []int {
+	m := make(map[int]struct{}, len(a))
+	l := make([]int, 0, len(a))
+	for _, v := range a {
+		if _, ok := m[v]; ok {
+			continue
+		}
+		m[v] = struct{}{}
+		l = append(l, v)
+	}
+	return l
+}
+
+func ToUniqueInt64Slice(a []int64) []int64 {
+	m := make(map[int64]struct{}, len(a))
+	l := make([]int64, 0, len(a))
+	for _, v := range a {
+		if _, ok := m[v]; ok {
+			continue
+		}
+		m[v] = struct{}{}
+		l = append(l, v)
+	}
+	return l
+}
