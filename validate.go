@@ -15,10 +15,12 @@ func Validate(i interface{}) error {
 	}
 
 	v := reflect.ValueOf(i)
-	if v.IsValid() && (v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface) {
+	if v.IsValid() && (v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface) && !v.IsNil() {
 		v = v.Elem()
-		if va, ok := v.Interface().(Validator); ok {
-			return va.Validate()
+		if v.CanInterface() {
+			if va, ok := v.Interface().(Validator); ok {
+				return va.Validate()
+			}
 		}
 	}
 
