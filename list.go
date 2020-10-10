@@ -5,6 +5,8 @@ import (
 	"reflect"
 )
 
+// ToList creates list.List
+// i can be nil, *list.List, or array/slice
 func ToList(i interface{}) *list.List {
 	if i == nil {
 		return list.New()

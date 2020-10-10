@@ -6,6 +6,8 @@ import (
 	"reflect"
 )
 
+// ToString converts i to string
+// i can be string, integer types, bool, []byte or any types which implement fmt.Stringer
 func ToString(i interface{}) (string, error) {
 	i = indirectToStringerOrError(i)
 	if i == nil {

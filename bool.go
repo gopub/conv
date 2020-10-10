@@ -7,6 +7,8 @@ import (
 	"strconv"
 )
 
+// ToBool converts i to bool
+// i can be bool, integer or string
 func ToBool(i interface{}) (bool, error) {
 	i = indirect(i)
 	switch v := i.(type) {
@@ -35,6 +37,7 @@ func ToBool(i interface{}) (bool, error) {
 	return n != 0, nil
 }
 
+// MustBool converts i to bool, will panic if failed
 func MustBool(i interface{}) bool {
 	v, err := ToBool(i)
 	if err != nil {
@@ -43,6 +46,8 @@ func MustBool(i interface{}) bool {
 	return v
 }
 
+// ToBoolSlice converts i to []bool
+// i is an array or slice with elements convertiable to bool
 func ToBoolSlice(i interface{}) ([]bool, error) {
 	i = indirect(i)
 	if i == nil {
@@ -67,6 +72,7 @@ func ToBoolSlice(i interface{}) ([]bool, error) {
 	return res, nil
 }
 
+// MustBoolSlice converts i to []bool, will panic if failed
 func MustBoolSlice(i interface{}) []bool {
 	v, err := ToBoolSlice(i)
 	if err != nil {

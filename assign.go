@@ -9,10 +9,12 @@ import (
 	"github.com/gopub/log"
 )
 
+// Assign fill src's underlying value and fields with dst
 func Assign(dst interface{}, src interface{}) error {
 	return AssignC(dst, src, defaultNameChecker)
 }
 
+// AssignC assigns value with name checker
 func AssignC(dst interface{}, src interface{}, checker NameChecker) error {
 	if dst == nil || src == nil || checker == nil {
 		panic(fmt.Sprintf("Cannot accept nil arguments: %v, %v, %v", dst, src, checker))

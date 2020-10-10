@@ -11,11 +11,15 @@ import (
 )
 
 const (
-	MaxInt  = 1<<(8*unsafe.Sizeof(int(0))-1) - 1
-	MinInt  = -1 << (8*unsafe.Sizeof(int(0)) - 1)
+	// MaxInt represents maximum int
+	MaxInt = 1<<(8*unsafe.Sizeof(int(0))-1) - 1
+	// MinInt represents minimum int
+	MinInt = -1 << (8*unsafe.Sizeof(int(0)) - 1)
+	// MaxUint represents maximum uint
 	MaxUint = 1<<(8*unsafe.Sizeof(uint(0))) - 1
 )
 
+// ToInt converts i to int
 func ToInt(i interface{}) (int, error) {
 	n, err := parseInt64(i)
 	if err != nil {
@@ -27,6 +31,7 @@ func ToInt(i interface{}) (int, error) {
 	return int(n), nil
 }
 
+// MustInt panics if ToInt(i) failed
 func MustInt(i interface{}) int {
 	v, err := ToInt(i)
 	if err != nil {
@@ -35,6 +40,7 @@ func MustInt(i interface{}) int {
 	return v
 }
 
+// ToInt8 converts i to int8
 func ToInt8(i interface{}) (int8, error) {
 	n, err := parseInt64(i)
 	if err != nil {
@@ -46,6 +52,7 @@ func ToInt8(i interface{}) (int8, error) {
 	return int8(n), nil
 }
 
+// MustInt8 panics if ToInt8(i) failed
 func MustInt8(i interface{}) int8 {
 	v, err := ToInt8(i)
 	if err != nil {
@@ -54,6 +61,7 @@ func MustInt8(i interface{}) int8 {
 	return v
 }
 
+// ToInt16 converts i to int16
 func ToInt16(i interface{}) (int16, error) {
 	n, err := parseInt64(i)
 	if err != nil {
@@ -65,6 +73,7 @@ func ToInt16(i interface{}) (int16, error) {
 	return int16(n), nil
 }
 
+// MustInt16 panics if ToInt16(i) failed
 func MustInt16(i interface{}) int16 {
 	v, err := ToInt16(i)
 	if err != nil {

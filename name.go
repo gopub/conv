@@ -2,6 +2,7 @@ package conv
 
 import "strings"
 
+// ToSnake converts s from CamelCase to Snake
 func ToSnake(s string) string {
 	snake := make([]rune, 0, len(s)+1)
 	flag := false
@@ -23,6 +24,7 @@ func ToSnake(s string) string {
 	return string(snake)
 }
 
+// ToCamel converts s from Snake to Camel
 func ToCamel(s string) string {
 	camel := make([]rune, 0, len(s)+1)
 	flag := false
@@ -45,18 +47,22 @@ func ToCamel(s string) string {
 	return string(camel)
 }
 
+// NameChecker check if names can be convertiable
 type NameChecker interface {
-	CheckName(a, b string) bool
+	CheckName(src, dst string) bool
 }
 
-type NameCheckFunc func(string, string) bool
+// NameCheckFunc defines func type which implements NameChecker
+type NameCheckFunc func(src string, dst string) bool
 
+// CheckName checks if srcName can be converted to dstName
 func (f NameCheckFunc) CheckName(srcName, dstName string) bool {
 	return f(srcName, dstName)
 }
 
 var defaultNameChecker = NameCheckFunc(CheckName)
 
+// CheckName is the default NameChecker
 func CheckName(a, b string) bool {
 	if a == b {
 		return true
