@@ -78,3 +78,16 @@ func MustStringSlice(i interface{}) []string {
 	}
 	return v
 }
+
+func ToUniqueStringSlice(a []string) []string {
+	m := make(map[string]struct{}, len(a))
+	l := make([]string, 0, len(a))
+	for _, v := range a {
+		if _, ok := m[v]; ok {
+			continue
+		}
+		m[v] = struct{}{}
+		l = append(l, v)
+	}
+	return l
+}
