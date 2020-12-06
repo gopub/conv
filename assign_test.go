@@ -3,6 +3,7 @@ package conv_test
 import (
 	"github.com/gopub/conv"
 	"testing"
+	"time"
 )
 
 type Image struct {
@@ -15,6 +16,7 @@ type Topic struct {
 	Title      string
 	CoverImage *Image
 	MoreImages []*Image
+	CreatedAt  time.Time
 }
 
 func TestAssign(t *testing.T) {
@@ -32,6 +34,7 @@ func TestAssign(t *testing.T) {
 				"link": "https://www.image.com",
 			},
 		},
+		"created_at": "2020-12-06T12:46:15.134526-05:00",
 	}
 
 	var topic Topic
@@ -108,4 +111,37 @@ func TestAssignStruct(t *testing.T) {
 		t.FailNow()
 	}
 	t.Logf("%#v", user)
+}
+
+func TestAssignJSONToStruct(t *testing.T) {
+	type Item struct {
+		ID        int64     `json:"id"`
+		CreatedAt time.Time `json:"created_at"`
+	}
+	tm := time.Now().Add(time.Hour)
+	i := new(Item)
+	jsonMap := map[string]interface{}{"id": 10, "created_at": tm}
+	err := conv.Assign(i, jsonMap)
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	if !tm.Equal(i.CreatedAt) {
+		t.Errorf("Expected CreatedAt to be %v instead of %v", tm, i.CreatedAt)
+		t.FailNow()
+	}
+
+	i = new(Item)
+	jsonStr := conv.MustJSONString(tm)
+	jsonStr = jsonStr[1 : len(jsonStr)-1]
+	jsonMap = map[string]interface{}{"id": 10, "created_at": jsonStr}
+	err = conv.Assign(i, jsonMap)
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	if !tm.Equal(i.CreatedAt) {
+		t.Errorf("Expected CreatedAt to be %v instead of %v", tm, i.CreatedAt)
+		t.FailNow()
+	}
 }

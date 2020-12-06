@@ -1,6 +1,7 @@
 package conv
 
 import (
+	"encoding"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -167,6 +168,27 @@ func valueToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 		if err := structToStruct(dst, src, nm); err != nil {
 			return fmt.Errorf("structToStruct: %w", err)
 		}
+	case reflect.String:
+		if dst.CanInterface() {
+			if u, ok := dst.Interface().(encoding.TextUnmarshaler); ok && u != nil {
+				err := u.UnmarshalText([]byte(src.String()))
+				if err != nil {
+					return fmt.Errorf("cannot unmarshal text into %v: %w", dst.Type(), err)
+				}
+				return nil
+			}
+
+			if dst.CanAddr() && dst.Addr().CanInterface() {
+				if u, ok := dst.Addr().Interface().(encoding.TextUnmarshaler); ok && u != nil {
+					err := u.UnmarshalText([]byte(src.String()))
+					if err != nil {
+						return fmt.Errorf("cannot unmarshal text into pointer to %v: %w", dst.Type(), err)
+					}
+					return nil
+				}
+			}
+		}
+		return fmt.Errorf("src is %v instead of struct or map", k)
 	default:
 		return fmt.Errorf("src is %v instead of struct or map", k)
 	}
@@ -291,7 +313,7 @@ func structToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error 
 	for i := 0; i < src.NumField(); i++ {
 		sfv := src.Field(i)
 		sfName := src.Type().Field(i).Name
-		if !sfv.IsValid() || sfv.Interface() == nil || !isExported(sfName) {
+		if !sfv.IsValid() || (sfv.CanInterface() && sfv.Interface() == nil) || sfv.IsZero() || !isExported(sfName) {
 			continue
 		}
 
