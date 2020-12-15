@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 )
 
 // ToString converts i to string
@@ -55,20 +56,25 @@ func ToStringSlice(i interface{}) ([]string, error) {
 	if l, ok := i.([]string); ok {
 		return l, nil
 	}
-	v := reflect.ValueOf(i)
-	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+
+	switch v := reflect.ValueOf(i); v.Kind() {
+	case reflect.Slice, reflect.Array:
+		num := v.Len()
+		res := make([]string, num)
+		var err error
+		for j := 0; j < num; j++ {
+			res[j], err = ToString(v.Index(j).Interface())
+			if err != nil {
+				return nil, fmt.Errorf("convert element at index %d: %w", i, err)
+			}
+		}
+		return res, nil
+	default:
+		if s, err := ToString(i); err == nil {
+			return strings.Fields(s), nil
+		}
 		return nil, fmt.Errorf("cannot convert %#v of type %T to []string", i, i)
 	}
-	num := v.Len()
-	res := make([]string, num)
-	var err error
-	for j := 0; j < num; j++ {
-		res[j], err = ToString(v.Index(j).Interface())
-		if err != nil {
-			return nil, fmt.Errorf("convert element at index %d: %w", i, err)
-		}
-	}
-	return res, nil
 }
 
 func MustStringSlice(i interface{}) []string {

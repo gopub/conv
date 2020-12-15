@@ -209,20 +209,24 @@ func ToIntSlice(i interface{}) ([]int, error) {
 	if l, ok := i.([]int); ok {
 		return l, nil
 	}
-	v := reflect.ValueOf(i)
-	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+	switch v := reflect.ValueOf(i); v.Kind() {
+	case reflect.Slice, reflect.Array:
+		num := v.Len()
+		res := make([]int, num)
+		var err error
+		for j := 0; j < num; j++ {
+			res[j], err = ToInt(v.Index(j).Interface())
+			if err != nil {
+				return nil, fmt.Errorf("convert index %d: %w", j, err)
+			}
+		}
+		return res, nil
+	default:
+		if k, err := ToInt(i); err == nil {
+			return []int{k}, nil
+		}
 		return nil, fmt.Errorf("cannot convert %v to slice", v.Kind())
 	}
-	num := v.Len()
-	res := make([]int, num)
-	var err error
-	for j := 0; j < num; j++ {
-		res[j], err = ToInt(v.Index(j).Interface())
-		if err != nil {
-			return nil, fmt.Errorf("convert index %d: %w", j, err)
-		}
-	}
-	return res, nil
 }
 
 func MustIntSlice(i interface{}) []int {
@@ -241,20 +245,25 @@ func ToInt64Slice(i interface{}) ([]int64, error) {
 	if l, ok := i.([]int64); ok {
 		return l, nil
 	}
-	v := reflect.ValueOf(i)
-	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+
+	switch v := reflect.ValueOf(i); v.Kind() {
+	case reflect.Slice, reflect.Array:
+		num := v.Len()
+		res := make([]int64, num)
+		var err error
+		for j := 0; j < num; j++ {
+			res[j], err = parseInt64(v.Index(j).Interface())
+			if err != nil {
+				return nil, fmt.Errorf("convert element at index %d: %w", i, err)
+			}
+		}
+		return res, nil
+	default:
+		if k, err := ToInt64(i); err == nil {
+			return []int64{k}, nil
+		}
 		return nil, fmt.Errorf("cannot convert %#v of type %T to []int64", i, i)
 	}
-	num := v.Len()
-	res := make([]int64, num)
-	var err error
-	for j := 0; j < num; j++ {
-		res[j], err = parseInt64(v.Index(j).Interface())
-		if err != nil {
-			return nil, fmt.Errorf("convert element at index %d: %w", i, err)
-		}
-	}
-	return res, nil
 }
 
 func MustInt64Slice(i interface{}) []int64 {
@@ -273,20 +282,25 @@ func ToUintSlice(i interface{}) ([]uint, error) {
 	if l, ok := i.([]uint); ok {
 		return l, nil
 	}
-	v := reflect.ValueOf(i)
-	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+
+	switch v := reflect.ValueOf(i); v.Kind() {
+	case reflect.Slice, reflect.Array:
+		num := v.Len()
+		res := make([]uint, num)
+		var err error
+		for j := 0; j < num; j++ {
+			res[j], err = ToUint(v.Index(j).Interface())
+			if err != nil {
+				return nil, fmt.Errorf("convert element at index %d: %w", i, err)
+			}
+		}
+		return res, nil
+	default:
+		if ui, err := ToUint(i); err == nil {
+			return []uint{ui}, nil
+		}
 		return nil, fmt.Errorf("cannot convert %#v of type %T to []uint", i, i)
 	}
-	num := v.Len()
-	res := make([]uint, num)
-	var err error
-	for j := 0; j < num; j++ {
-		res[j], err = ToUint(v.Index(j).Interface())
-		if err != nil {
-			return nil, fmt.Errorf("convert element at index %d: %w", i, err)
-		}
-	}
-	return res, nil
 }
 
 func MustUintSlice(i interface{}) []uint {
@@ -305,20 +319,25 @@ func ToUint64Slice(i interface{}) ([]uint64, error) {
 	if l, ok := i.([]uint64); ok {
 		return l, nil
 	}
-	v := reflect.ValueOf(i)
-	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+
+	switch v := reflect.ValueOf(i); v.Kind() {
+	case reflect.Slice, reflect.Array:
+		num := v.Len()
+		res := make([]uint64, num)
+		var err error
+		for j := 0; j < num; j++ {
+			res[j], err = parseUint64(v.Index(j).Interface())
+			if err != nil {
+				return nil, fmt.Errorf("convert element at index %d: %w", i, err)
+			}
+		}
+		return res, nil
+	default:
+		if ui, err := ToUint64(i); err == nil {
+			return []uint64{ui}, nil
+		}
 		return nil, fmt.Errorf("cannot convert %#v of type %T to []uint64", i, i)
 	}
-	num := v.Len()
-	res := make([]uint64, num)
-	var err error
-	for j := 0; j < num; j++ {
-		res[j], err = parseUint64(v.Index(j).Interface())
-		if err != nil {
-			return nil, fmt.Errorf("convert element at index %d: %w", i, err)
-		}
-	}
-	return res, nil
 }
 
 func MustUint64Slice(i interface{}) []uint64 {
