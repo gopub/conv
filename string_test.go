@@ -3,6 +3,7 @@ package conv_test
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/stretchr/testify/require"
 	"testing"
 
 	"github.com/gopub/conv"
@@ -71,5 +72,38 @@ func TestToString(t *testing.T) {
 			assert.Error(t, err, c)
 			assert.Equal(t, "", res)
 		}
+	})
+}
+
+func TestToStringSlice(t *testing.T) {
+	t.Run("SingleString", func(t *testing.T) {
+		s := "123"
+		l, err := conv.ToStringSlice(s)
+		require.NoError(t, err)
+		require.Equal(t, []string{s}, l)
+	})
+	t.Run("SingleInt", func(t *testing.T) {
+		s := 123
+		l, err := conv.ToStringSlice(s)
+		require.NoError(t, err)
+		require.Equal(t, []string{fmt.Sprint(s)}, l)
+	})
+	t.Run("IntSlice", func(t *testing.T) {
+		s := []int{123, -1, 9}
+		l, err := conv.ToStringSlice(s)
+		require.NoError(t, err)
+		require.Equal(t, []string{"123", "-1", "9"}, l)
+	})
+	t.Run("MixSlice", func(t *testing.T) {
+		s := []interface{}{123, "hello", "0x123"}
+		l, err := conv.ToStringSlice(s)
+		require.NoError(t, err)
+		require.Equal(t, []string{"123", "hello", "0x123"}, l)
+	})
+	t.Run("MixArray", func(t *testing.T) {
+		s := [3]interface{}{123, "hello", "0x123"}
+		l, err := conv.ToStringSlice(s)
+		require.NoError(t, err)
+		require.Equal(t, []string{"123", "hello", "0x123"}, l)
 	})
 }
