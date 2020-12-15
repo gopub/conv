@@ -27,7 +27,7 @@ func MustFloat32(i interface{}) float32 {
 	return v
 }
 func ToFloat64(i interface{}) (float64, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	if i == nil {
 		return 0, errNilValue
 	}
@@ -68,7 +68,7 @@ func MustFloat64(i interface{}) float64 {
 }
 
 func ToFloat32Slice(i interface{}) ([]float32, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	if i == nil {
 		return nil, nil
 	}
@@ -100,7 +100,7 @@ func MustFloat32Slice(i interface{}) []float32 {
 }
 
 func ToFloat64Slice(i interface{}) ([]float64, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	if i == nil {
 		return nil, nil
 	}

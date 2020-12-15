@@ -8,7 +8,7 @@ import (
 )
 
 func ToBytes(i interface{}) ([]byte, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	switch v := i.(type) {
 	case []byte:
 		return v, nil
@@ -26,7 +26,7 @@ func ToBytes(i interface{}) ([]byte, error) {
 }
 
 func SetBytes(target interface{}, b []byte) error {
-	target = indirect(target)
+	target = Indirect(target)
 	if !reflect.ValueOf(target).CanSet() {
 		return fmt.Errorf("target %T is unsetable", target)
 	}

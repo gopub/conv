@@ -22,7 +22,7 @@ func ToList(i interface{}) *list.List {
 	}
 
 	l := list.New()
-	v := reflect.ValueOf(indirect(i))
+	v := reflect.ValueOf(Indirect(i))
 	if v.IsValid() && (v.Kind() == reflect.Slice || v.Kind() == reflect.Array) && !v.IsNil() {
 		for j := 0; j < v.Len(); j++ {
 			l.PushBack(v.Index(j).Interface())

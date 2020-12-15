@@ -10,9 +10,9 @@ var errNilValue = errors.New("value is nil")
 
 // From html/template/content.go
 // Copyright 2011 The Go Authors. All rights reserved.
-// indirect returns the value, after dereferencing as many times
+// Indirect returns the value, after dereferencing as many times
 // as necessary to reach the base type (or nil).
-func indirect(a interface{}) interface{} {
+func Indirect(a interface{}) interface{} {
 	if a == nil {
 		return nil
 	}
@@ -29,10 +29,10 @@ func indirect(a interface{}) interface{} {
 
 // From html/template/content.go
 // Copyright 2011 The Go Authors. All rights reserved.
-// indirectToStringerOrError returns the value, after dereferencing as many times
+// IndirectToStringerOrError returns the value, after dereferencing as many times
 // as necessary to reach the base type (or nil) or an implementation of fmt.Stringer
 // or error,
-func indirectToStringerOrError(a interface{}) interface{} {
+func IndirectToStringerOrError(a interface{}) interface{} {
 	if a == nil {
 		return nil
 	}

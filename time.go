@@ -18,7 +18,7 @@ var timeFormats = []string{
 
 // ToDuration converts an interface to a time.Duration type.
 func ToDuration(i interface{}) (time.Duration, error) {
-	i = indirect(i)
+	i = Indirect(i)
 
 	if s, err := ToString(i); err == nil {
 		s = strings.ToLower(s)
@@ -41,7 +41,7 @@ func ToTime(i interface{}) (time.Time, error) {
 }
 
 func ToTimeInLocation(i interface{}, loc *time.Location) (time.Time, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	s, err := ToString(i)
 	if err != nil {
 		return time.Time{}, fmt.Errorf("cannot convert %#v of type %T to date: %w", i, i, err)

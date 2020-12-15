@@ -10,7 +10,7 @@ import (
 // ToBool converts i to bool
 // i can be bool, integer or string
 func ToBool(i interface{}) (bool, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	switch v := i.(type) {
 	case bool:
 		return v, nil
@@ -49,7 +49,7 @@ func MustBool(i interface{}) bool {
 // ToBoolSlice converts i to []bool
 // i is an array or slice with elements convertiable to bool
 func ToBoolSlice(i interface{}) ([]bool, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	if i == nil {
 		return nil, nil
 	}

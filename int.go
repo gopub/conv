@@ -202,7 +202,7 @@ func MustUint64(i interface{}) uint64 {
 }
 
 func ToIntSlice(i interface{}) ([]int, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	if i == nil {
 		return nil, nil
 	}
@@ -238,7 +238,7 @@ func MustIntSlice(i interface{}) []int {
 }
 
 func ToInt64Slice(i interface{}) ([]int64, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	if i == nil {
 		return nil, nil
 	}
@@ -275,7 +275,7 @@ func MustInt64Slice(i interface{}) []int64 {
 }
 
 func ToUintSlice(i interface{}) ([]uint, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	if i == nil {
 		return nil, nil
 	}
@@ -312,7 +312,7 @@ func MustUintSlice(i interface{}) []uint {
 }
 
 func ToUint64Slice(i interface{}) ([]uint64, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	if i == nil {
 		return nil, nil
 	}
@@ -349,7 +349,7 @@ func MustUint64Slice(i interface{}) []uint64 {
 }
 
 func parseInt64(i interface{}) (int64, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	if i == nil {
 		return 0, errNilValue
 	}
@@ -392,7 +392,7 @@ func parseInt64(i interface{}) (int64, error) {
 }
 
 func parseUint64(i interface{}) (uint64, error) {
-	i = indirect(i)
+	i = Indirect(i)
 	if i == nil {
 		return 0, errNilValue
 	}

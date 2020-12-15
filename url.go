@@ -8,7 +8,7 @@ import (
 )
 
 func ToURLValues(i interface{}) (url.Values, error) {
-	i = indirectToStringerOrError(i)
+	i = IndirectToStringerOrError(i)
 	if i == nil {
 		return nil, errNilValue
 	}
