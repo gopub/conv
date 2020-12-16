@@ -49,20 +49,16 @@ func MustString(i interface{}) string {
 }
 
 func ToStringSlice(i interface{}) ([]string, error) {
-	fmt.Println(i)
 	i = Indirect(i)
 	if i == nil {
 		return nil, nil
 	}
 	if l, ok := i.([]string); ok {
-		fmt.Println(1)
 		return l, nil
 	}
 
-	fmt.Println(2)
 	switch v := reflect.ValueOf(i); v.Kind() {
 	case reflect.Slice, reflect.Array:
-		fmt.Println(3)
 		num := v.Len()
 		res := make([]string, num)
 		var err error
@@ -74,9 +70,7 @@ func ToStringSlice(i interface{}) ([]string, error) {
 		}
 		return res, nil
 	default:
-		fmt.Println(4)
 		if s, err := ToString(i); err == nil {
-			fmt.Println(5, s)
 			return strings.Fields(s), nil
 		}
 		return nil, fmt.Errorf("cannot convert %#v of type %T to []string", i, i)
