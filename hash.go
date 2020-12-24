@@ -78,3 +78,13 @@ func SHA256(str string) string {
 	}
 	return hex.EncodeToString(sha256er.Sum(nil))
 }
+
+func Hash32(b []byte) [32]byte {
+	v := b
+	sum := sha256.Sum256(v)
+	for i := 0; i < 3; i++ {
+		v = append(sum[:], v...)
+		sum = sha256.Sum256(v)
+	}
+	return sum
+}
