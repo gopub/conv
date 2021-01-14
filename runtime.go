@@ -1,7 +1,6 @@
 package conv
 
 import (
-	"log"
 	"reflect"
 	"runtime"
 )
@@ -28,17 +27,24 @@ func IsNil(i interface{}) bool {
 	}
 }
 
-func ReverseArray(a interface{}) {
+func ReverseArray(a interface{}) bool {
 	a = Indirect(a)
+	if a == nil {
+		return false
+	}
 	v := reflect.ValueOf(a)
-	if v.Kind() != reflect.Array && v.Kind() != reflect.Slice {
-		log.Panicf("Cannot revert %T", a)
+	if v.IsNil() || !v.IsValid() || v.Kind() != reflect.Array && v.Kind() != reflect.Slice {
+		return false
 	}
 
 	for i, j := 0, v.Len()-1; i < j; i, j = i+1, j-1 {
 		vi, vj := v.Index(i), v.Index(j)
 		tmp := vi.Interface()
+		if !vi.CanSet() {
+			return false
+		}
 		vi.Set(vj)
 		vj.Set(reflect.ValueOf(tmp))
 	}
+	return true
 }
