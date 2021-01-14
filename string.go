@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"regexp"
 	"strings"
 )
 
@@ -96,4 +97,15 @@ func ToUniqueStringSlice(a []string) []string {
 		l = append(l, v)
 	}
 	return l
+}
+
+var whitespaceRegexp = regexp.MustCompile(`[ \t\n\r]+`)
+
+// SquishString returns the string
+// first removing all whitespace on both ends of the string,
+// and then changing remaining consecutive whitespace groups into one space each.
+func SquishString(s string) string {
+	s = strings.TrimSpace(s)
+	s = whitespaceRegexp.ReplaceAllString(s, " ")
+	return s
 }
