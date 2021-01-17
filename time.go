@@ -2,6 +2,7 @@ package conv
 
 import (
 	"fmt"
+	"github.com/gopub/log"
 	"strings"
 	"time"
 )
@@ -53,4 +54,23 @@ func ToTimeInLocation(i interface{}, loc *time.Location) (time.Time, error) {
 		}
 	}
 	return time.Time{}, fmt.Errorf("cannot convert %#v of type %T to date", i, i)
+}
+
+func ToLocation(name string, offset int) *time.Location {
+	// LoadLocation get failed on iOS
+	loc, err := time.LoadLocation(name)
+	if err == nil {
+		return loc
+	}
+	log.Warnf("Cannot load location %s: %v. Converted to a fixed zone", name, err)
+	loc = time.FixedZone(name, offset)
+	return loc
+}
+
+func IsDate(s string) bool {
+	if len(s) > 10 {
+		return false
+	}
+	_, err := ToTime(s)
+	return err == nil
 }
