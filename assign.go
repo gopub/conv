@@ -189,6 +189,11 @@ func valueToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 			}
 		}
 		return fmt.Errorf("src is %v instead of struct or map", k)
+	case reflect.Ptr:
+		if src.IsNil() {
+			return nil
+		}
+		return valueToStruct(dst, src.Elem(), nm)
 	default:
 		return fmt.Errorf("src is %v instead of struct or map", k)
 	}

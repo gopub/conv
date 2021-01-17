@@ -107,8 +107,3 @@ func TestToStringSlice(t *testing.T) {
 		require.Equal(t, []string{"123", "hello", "0x123"}, l)
 	})
 }
-
-func TestSquishString(t *testing.T) {
-	s := "\n\n\t\t1 \t2\n3  4\n\t \n5   "
-	require.Equal(t, "1 2 3 4 5", conv.SquishString(s))
-}
