@@ -3,7 +3,6 @@ package conv_test
 import (
 	"github.com/gopub/conv"
 	"github.com/stretchr/testify/require"
-	"math/rand"
 	"testing"
 	"time"
 )
@@ -14,16 +13,28 @@ func TestSquishString(t *testing.T) {
 }
 
 func TestSquishStringFields(t *testing.T) {
-	var foo struct {
+	type FullName struct {
+		FirstName string
+		LastName  string
+	}
+
+	type User struct {
 		ID        int64
-		Name      string
+		Name      FullName
+		Address   string
 		CreatedAt time.Time
 	}
 
-	foo.ID = rand.Int63()
-	foo.Name = "  hello  "
-	foo.CreatedAt = time.Now()
-
-	conv.SquishStringFields(&foo)
-	require.Equal(t, "hello", foo.Name)
+	u := &User{
+		ID: 1,
+		Name: FullName{
+			FirstName: "Tom  ",
+			LastName:  "  Jim ",
+		},
+		Address: "\n\n \t Toronto   Canada   ",
+	}
+	conv.SquishStringFields(u)
+	require.Equal(t, "Tom", u.Name.FirstName)
+	require.Equal(t, "Jim", u.Name.LastName)
+	require.Equal(t, "Toronto Canada", u.Address)
 }

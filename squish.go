@@ -1,6 +1,7 @@
 package conv
 
 import (
+	"fmt"
 	"reflect"
 	"regexp"
 	"strings"
@@ -26,28 +27,13 @@ func squishStringFields(v reflect.Value) {
 	switch v.Kind() {
 	case reflect.Struct:
 		squishStructStringFields(v)
-	case reflect.Map:
-		squishMapStringValues(v)
+	case reflect.String:
+		fmt.Println(v.CanSet(), v.String())
+		if v.CanSet() {
+			v.SetString(SquishString(v.String()))
+		}
 	default:
 		break
-	}
-}
-
-func squishMapStringValues(v reflect.Value) {
-	for _, k := range v.MapKeys() {
-		val := v.MapIndex(k)
-		switch val.Kind() {
-		case reflect.String:
-			val.SetString(SquishString(val.String()))
-		case reflect.Struct:
-			squishStructStringFields(val)
-		case reflect.Map:
-			squishMapStringValues(val)
-		case reflect.Ptr:
-			SquishStringFields(val.Elem().Interface())
-		default:
-			break
-		}
 	}
 }
 
@@ -62,8 +48,6 @@ func squishStructStringFields(v reflect.Value) {
 			fv.SetString(SquishString(fv.String()))
 		case reflect.Struct:
 			squishStructStringFields(fv)
-		case reflect.Map:
-			squishMapStringValues(fv)
 		case reflect.Ptr, reflect.Interface:
 			if fv.IsNil() {
 				break
