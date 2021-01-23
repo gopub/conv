@@ -100,6 +100,14 @@ func VarargsToURLValues(keyAndValues ...interface{}) (url.Values, error) {
 	return uv, nil
 }
 
+func MustVarargsToURLValues(keyAndValues ...interface{}) url.Values {
+	uv, err := VarargsToURLValues(keyAndValues...)
+	if err != nil {
+		panic(err)
+	}
+	return uv
+}
+
 func VarargsToSlice(keyValues ...interface{}) (keys []string, values []interface{}, err error) {
 	n := len(keyValues)
 	if n%2 != 0 {
