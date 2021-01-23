@@ -97,3 +97,11 @@ func ToUniqueStringSlice(a []string) []string {
 	}
 	return l
 }
+
+func JoinAsString(a interface{}, sep string) (string, error) {
+	l, err := ToStringSlice(a)
+	if err != nil {
+		return "", err
+	}
+	return strings.Join(l, sep), nil
+}
