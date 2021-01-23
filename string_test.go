@@ -3,8 +3,9 @@ package conv_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/gopub/conv"
 	"github.com/stretchr/testify/assert"

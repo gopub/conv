@@ -81,3 +81,44 @@ func IsURL(s string) bool {
 	u, _ := ToURL(s)
 	return u != ""
 }
+
+func VarargsToURLValues(keyAndValues ...interface{}) (url.Values, error) {
+	uv := url.Values{}
+	keys, vals, err := VarargsToSlice(keyAndValues)
+	if err != nil {
+		return nil, err
+	}
+	for i, k := range keys {
+		vs, err := ToString(vals[i])
+		if err != nil {
+			return nil, err
+		}
+		if vs != "" {
+			uv.Add(k, vs)
+		}
+	}
+	return uv, nil
+}
+
+func VarargsToSlice(keyValues ...interface{}) (keys []string, values []interface{}, err error) {
+	n := len(keyValues)
+	if n%2 != 0 {
+		err = errors.New("keyValues should be pairs of (string, interface{})")
+		return
+	}
+
+	keys, values = make([]string, 0, n/2), make([]interface{}, 0, n/2)
+	for i := 0; i < n/2; i++ {
+		if k, ok := keyValues[2*i].(string); !ok {
+			err = fmt.Errorf("keyValues[%d] isn't convertible to string", i)
+			return
+		} else if keyValues[2*i+1] == nil {
+			err = fmt.Errorf("keyValues[%d] is nil", 2*i+1)
+			return
+		} else {
+			keys = append(keys, k)
+			values = append(values, keyValues[2*i+1])
+		}
+	}
+	return
+}

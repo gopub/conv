@@ -1,9 +1,10 @@
 package conv_test
 
 import (
+	"testing"
+
 	"github.com/gopub/conv"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestReverseArray(t *testing.T) {

@@ -1,10 +1,11 @@
 package conv_test
 
 import (
-	"github.com/gopub/conv"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
+
+	"github.com/gopub/conv"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSquishString(t *testing.T) {

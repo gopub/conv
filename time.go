@@ -2,7 +2,7 @@ package conv
 
 import (
 	"fmt"
-	"github.com/gopub/log"
+	"log"
 	"strings"
 	"time"
 )
@@ -62,7 +62,7 @@ func ToLocation(name string, offset int) *time.Location {
 	if err == nil {
 		return loc
 	}
-	log.Warnf("Cannot load location %s: %v. Converted to a fixed zone", name, err)
+	log.Printf("Cannot load location %s: %v. Converted to a fixed zone", name, err)
 	loc = time.FixedZone(name, offset)
 	return loc
 }

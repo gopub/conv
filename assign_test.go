@@ -1,9 +1,10 @@
 package conv_test
 
 import (
-	"github.com/gopub/conv"
 	"testing"
 	"time"
+
+	"github.com/gopub/conv"
 )
 
 type Image struct {

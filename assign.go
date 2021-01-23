@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gopub/log"
+	"log"
 	"reflect"
 )
 
@@ -219,7 +219,7 @@ func mapToMap(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 			kv := reflect.New(de.Elem())
 			err := assign(kv, src.MapIndex(k), nm)
 			if err != nil {
-				log.Warnf("assign: %v", k.Interface())
+				log.Printf("Cannot assign: %v", k.Interface())
 				break
 			}
 			dst.SetMapIndex(k, kv)
@@ -227,7 +227,7 @@ func mapToMap(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 			kv := reflect.New(de)
 			err := assign(kv, src.MapIndex(k), nm)
 			if err != nil {
-				log.Warnf("assign: %v", k.Interface())
+				log.Printf("Cannot assign: %v", k.Interface())
 				break
 			}
 			dst.SetMapIndex(k, kv.Elem())
@@ -251,7 +251,7 @@ func mapToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 		if ft.Anonymous {
 			err := assign(fv, src, nm)
 			if err != nil {
-				log.Warnf("Cannot assign %s: %v", ft.Name, err)
+				log.Printf("Cannot assign %s: %v", ft.Name, err)
 			}
 			continue
 		}
@@ -263,7 +263,7 @@ func mapToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 
 			fsv := src.MapIndex(key)
 			if !fsv.IsValid() {
-				log.Warnf("Invalid value for %s", ft.Name)
+				log.Printf("Invalid value for %s", ft.Name)
 				continue
 			}
 
@@ -273,7 +273,7 @@ func mapToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 
 			err := assign(fv, reflect.ValueOf(fsv.Interface()), nm)
 			if err != nil {
-				log.Warnf("Cannot assign %s: %v", ft.Name, err)
+				log.Printf("Cannot assign %s: %v", ft.Name, err)
 			}
 			break
 		}
@@ -291,7 +291,7 @@ func structToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error 
 		ft := dst.Type().Field(i)
 		if ft.Anonymous {
 			if err := assign(fv, src, nm); err != nil {
-				log.Warnf("Cannot assign anonymous %s: %v", ft.Name, err)
+				log.Printf("Cannot assign anonymous %s: %v", ft.Name, err)
 			}
 			continue
 		}
@@ -309,7 +309,7 @@ func structToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error 
 
 			err := assign(fv, reflect.ValueOf(sfv.Interface()), nm)
 			if err != nil {
-				log.Warnf("Cannot assign %s to %s: %v", ft.Name, sfName, err)
+				log.Printf("Cannot assign %s to %s: %v", ft.Name, sfName, err)
 			}
 			break
 		}
