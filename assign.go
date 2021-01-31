@@ -2,7 +2,6 @@ package conv
 
 import (
 	"encoding"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -19,9 +18,7 @@ func AssignC(dst interface{}, src interface{}, checker NameChecker) error {
 	if dst == nil || src == nil || checker == nil {
 		panic(fmt.Sprintf("Cannot accept nil arguments: %v, %v, %v", dst, src, checker))
 	}
-	if data, err := json.Marshal(src); err == nil {
-		_ = json.Unmarshal(data, dst)
-	}
+	_ = JSONCopy(dst, src)
 	dv := IndirectWritableValue(reflect.ValueOf(dst), false)
 	// dv must be a nil pointer or a valid value
 	err := assign(dv, reflect.ValueOf(src), checker)
@@ -36,14 +33,6 @@ func AssignC(dst interface{}, src interface{}, checker NameChecker) error {
 
 // dst is valid value or pointer to value
 func assign(dst reflect.Value, src reflect.Value, nm NameChecker) error {
-	if !src.IsValid() {
-		return errors.New("src is invalid")
-	}
-
-	if !dst.IsValid() {
-		panic(fmt.Sprintf("invalid values:dst=%#v,src=%#v", dst, src))
-	}
-
 	src = IndirectReadableValue(src)
 	dv := IndirectWritableValue(dst, true)
 	switch dv.Kind() {
@@ -101,6 +90,7 @@ func assign(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 			return fmt.Errorf("assign to struct: %w", err)
 		}
 	case reflect.Interface:
+		// if i is a pointer to an interface, then ValueOf(i).Elem().Kind() is reflect.Interface
 		switch ev := dv.Elem(); ev.Kind() {
 		case reflect.Map:
 			if k := src.Kind(); k != reflect.Map {
