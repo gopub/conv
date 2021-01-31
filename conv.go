@@ -93,3 +93,11 @@ func VarargsToSlice(keyValues ...interface{}) (keys []string, values []interface
 	}
 	return
 }
+
+func wrapError(err error, format string, args ...interface{}) error {
+	if err == nil {
+		return nil
+	}
+	s := fmt.Sprintf(format, args...)
+	return fmt.Errorf("%s: %w", s, err)
+}

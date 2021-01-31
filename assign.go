@@ -124,13 +124,9 @@ func assign(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 func valueToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 	switch k := src.Kind(); k {
 	case reflect.Map:
-		if err := mapToStruct(dst, src, nm); err != nil {
-			return fmt.Errorf("mapToStruct: %w", err)
-		}
+		return wrapError(mapToStruct(dst, src, nm), "mapToStruct")
 	case reflect.Struct:
-		if err := structToStruct(dst, src, nm); err != nil {
-			return fmt.Errorf("structToStruct: %w", err)
-		}
+		return wrapError(structToStruct(dst, src, nm), "structToStruct")
 	case reflect.String:
 		if dst.CanInterface() {
 			if u, ok := dst.Interface().(encoding.TextUnmarshaler); ok && u != nil {
