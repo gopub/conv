@@ -22,10 +22,7 @@ func AssignC(dst interface{}, src interface{}, checker NameChecker) error {
 	if data, err := json.Marshal(src); err == nil {
 		_ = json.Unmarshal(data, dst)
 	}
-	dv := indirectDstVal(reflect.ValueOf(dst), false)
-	if !dv.CanSet() {
-		panic(fmt.Sprintf("Cannot assign dst: %v", dv.Kind()))
-	}
+	dv := IndirectWritableValue(reflect.ValueOf(dst), false)
 	// dv must be a nil pointer or a valid value
 	err := assign(dv, reflect.ValueOf(src), checker)
 	if err != nil {
@@ -35,27 +32,6 @@ func AssignC(dst interface{}, src interface{}, checker NameChecker) error {
 		return fmt.Errorf("cannot validate: %w", err)
 	}
 	return nil
-}
-
-func indirectDstVal(v reflect.Value, populate bool) reflect.Value {
-	for v.Kind() == reflect.Ptr {
-		if v.IsNil() {
-			if populate {
-				v.Set(reflect.New(v.Type().Elem()))
-			} else {
-				break
-			}
-		}
-		v = v.Elem()
-	}
-	return v
-}
-
-func indirectSrcVal(v reflect.Value) reflect.Value {
-	for (v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface) && !v.IsNil() {
-		v = v.Elem()
-	}
-	return v
 }
 
 // dst is valid value or pointer to value
@@ -68,11 +44,8 @@ func assign(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 		panic(fmt.Sprintf("invalid values:dst=%#v,src=%#v", dst, src))
 	}
 
-	src = indirectSrcVal(src)
-	dv := indirectDstVal(dst, true)
-	if !dv.CanSet() {
-		panic(fmt.Sprintf("Cannot assign dst: %v", dv.Kind()))
-	}
+	src = IndirectReadableValue(src)
+	dv := IndirectWritableValue(dst, true)
 	switch dv.Kind() {
 	case reflect.Bool:
 		b, err := ToBool(src.Interface())

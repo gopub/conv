@@ -47,6 +47,30 @@ func IndirectToStringerOrError(a interface{}) interface{} {
 	return v.Interface()
 }
 
+func IndirectReadableValue(v reflect.Value) reflect.Value {
+	for (v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface) && !v.IsNil() {
+		v = v.Elem()
+	}
+	return v
+}
+
+func IndirectWritableValue(v reflect.Value, populate bool) reflect.Value {
+	for v.Kind() == reflect.Ptr {
+		if v.IsNil() {
+			if populate && v.CanSet() {
+				v.Set(reflect.New(v.Type().Elem()))
+			} else {
+				break
+			}
+		}
+		v = v.Elem()
+	}
+	if !v.CanSet() {
+		panic(fmt.Sprintf("Cannot set %v", v.Kind()))
+	}
+	return v
+}
+
 func VarargsToSlice(keyValues ...interface{}) (keys []string, values []interface{}, err error) {
 	n := len(keyValues)
 	if n%2 != 0 {

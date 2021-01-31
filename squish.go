@@ -23,7 +23,7 @@ func SquishStringFields(i interface{}) {
 }
 
 func squishStringFields(v reflect.Value) {
-	v = indirectSrcVal(v)
+	v = IndirectReadableValue(v)
 	switch v.Kind() {
 	case reflect.Struct:
 		squishStructStringFields(v)

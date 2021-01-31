@@ -24,7 +24,7 @@ func Validate(i interface{}) error {
 		}
 	}
 
-	v = indirectDstVal(v, false)
+	v = IndirectReadableValue(v)
 	if v.Kind() == reflect.Struct {
 		t := v.Type()
 		for j := 0; j < v.NumField(); j++ {
