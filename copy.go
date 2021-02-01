@@ -48,16 +48,10 @@ func DeepCopy(dst, src interface{}) error {
 	dstType := reflect.TypeOf(dst)
 	srcType := reflect.TypeOf(src)
 
-	if dstType == reflect.PtrTo(srcType) {
+	dstKind := IndirectReadableValue(reflect.ValueOf(dst)).Kind()
+	srcKind := IndirectReadableValue(reflect.ValueOf(src)).Kind()
+	if reflect.PtrTo(srcType).ConvertibleTo(dstType) || (srcKind == dstKind && dstKind == reflect.Struct) {
 		err := GobCopy(dst, src)
-		if err != nil {
-			return fmt.Errorf("gob copy: %w", err)
-		}
-		return nil
-	}
-
-	if reflect.PtrTo(srcType).ConvertibleTo(dstType) {
-		err := JSONCopy(dst, src)
 		if err != nil {
 			return fmt.Errorf("json copy: %w", err)
 		}

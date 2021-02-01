@@ -19,6 +19,7 @@ func AssignC(dst interface{}, src interface{}, checker NameChecker) error {
 		panic(fmt.Sprintf("Cannot accept nil arguments: %v, %v, %v", dst, src, checker))
 	}
 	_ = JSONCopy(dst, src)
+	_ = GobCopy(dst, src)
 	dv := IndirectWritableValue(reflect.ValueOf(dst), false)
 	// dv must be a nil pointer or a valid value
 	err := assign(dv, reflect.ValueOf(src), checker)
