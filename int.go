@@ -356,24 +356,29 @@ func parseInt64(i interface{}) (int64, error) {
 	if b, ok := i.([]byte); ok {
 		i = string(b)
 	}
-	switch v := reflect.ValueOf(i); v.Kind() {
-	case reflect.Bool:
-		if v.Bool() {
-			return 1, nil
-		}
-		return 0, nil
-	case reflect.Float32, reflect.Float64:
-		return int64(v.Float()), nil
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+	v := reflect.ValueOf(i)
+	if IsIntValue(v) {
 		return v.Int(), nil
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32:
-		return int64(v.Uint()), nil
-	case reflect.Uint64:
+	}
+
+	if IsUintValue(v) {
 		n := v.Uint()
 		if n > math.MaxInt64 {
 			return 0, strconv.ErrRange
 		}
 		return int64(n), nil
+	}
+
+	if IsFloatValue(v) {
+		return int64(v.Float()), nil
+	}
+
+	switch v.Kind() {
+	case reflect.Bool:
+		if v.Bool() {
+			return 1, nil
+		}
+		return 0, nil
 	case reflect.String:
 		n, err := strconv.ParseInt(v.String(), 0, 64)
 		if err == nil {
@@ -399,26 +404,33 @@ func parseUint64(i interface{}) (uint64, error) {
 	if b, ok := i.([]byte); ok {
 		i = string(b)
 	}
-	switch v := reflect.ValueOf(i); v.Kind() {
-	case reflect.Bool:
-		if v.Bool() {
-			return 1, nil
-		}
-		return 0, nil
-	case reflect.Float32, reflect.Float64:
-		f := v.Float()
-		if f < 0 {
-			return 0, strconv.ErrRange
-		}
-		return uint64(f), nil
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+	v := reflect.ValueOf(i)
+	if IsIntValue(v) {
 		n := v.Int()
 		if n < 0 {
 			return 0, strconv.ErrRange
 		}
 		return uint64(n), nil
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+	}
+
+	if IsUintValue(v) {
 		return v.Uint(), nil
+	}
+
+	if IsFloatValue(v) {
+		f := v.Float()
+		if f < 0 {
+			return 0, strconv.ErrRange
+		}
+		return uint64(f), nil
+	}
+
+	switch v.Kind() {
+	case reflect.Bool:
+		if v.Bool() {
+			return 1, nil
+		}
+		return 0, nil
 	case reflect.String:
 		n, err := strconv.ParseInt(v.String(), 0, 64)
 		if err == nil {

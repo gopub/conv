@@ -36,17 +36,19 @@ func ToFloat64(i interface{}) (float64, error) {
 		i = string(b)
 	}
 	v := reflect.ValueOf(i)
-	switch v.Kind() {
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32:
+	if IsIntValue(v) {
 		return float64(v.Int()), nil
-	case reflect.Int64:
-		return float64(v.Int()), nil
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32:
+	}
+
+	if IsUintValue(v) {
 		return float64(v.Uint()), nil
-	case reflect.Uint64:
-		return float64(v.Uint()), nil
-	case reflect.Float32, reflect.Float64:
+	}
+
+	if IsFloatValue(v) {
 		return v.Float(), nil
+	}
+
+	switch v.Kind() {
 	case reflect.String:
 		return strconv.ParseFloat(v.String(), 64)
 	case reflect.Bool:

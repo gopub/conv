@@ -55,35 +55,34 @@ func SetBytes(target interface{}, b []byte) error {
 		return nil
 	}
 
-	switch v := reflect.ValueOf(target); v.Kind() {
-	case reflect.String:
-		v.SetString(string(b))
-	case reflect.Int64,
-		reflect.Int32,
-		reflect.Int,
-		reflect.Int16,
-		reflect.Int8:
+	v := reflect.ValueOf(target)
+	if IsIntValue(v) {
 		i, err := ToInt64(b)
 		if err != nil {
 			return fmt.Errorf("parse int: %v", err)
 		}
 		v.SetInt(i)
-	case reflect.Uint64,
-		reflect.Uint32,
-		reflect.Uint,
-		reflect.Uint16,
-		reflect.Uint8:
+	}
+
+	if IsUintValue(v) {
 		i, err := ToUint64(b)
 		if err != nil {
 			return fmt.Errorf("parse uint: %w", err)
 		}
 		v.SetUint(i)
-	case reflect.Float32, reflect.Float64:
+	}
+
+	if IsFloatValue(v) {
 		i, err := ToFloat64(b)
 		if err != nil {
 			return fmt.Errorf("parse float: %w", err)
 		}
 		v.SetFloat(i)
+	}
+
+	switch v.Kind() {
+	case reflect.String:
+		v.SetString(string(b))
 	case reflect.Bool:
 		i, err := ToBool(b)
 		if err != nil {

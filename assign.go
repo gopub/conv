@@ -10,14 +10,23 @@ import (
 
 // Assign fill src's underlying value and fields with dst
 func Assign(dst interface{}, src interface{}) error {
-	return AssignC(dst, src, defaultNameChecker)
+	return AssignC(dst, src, nil)
 }
 
 // AssignC assigns value with name checker
 func AssignC(dst interface{}, src interface{}, checker NameChecker) error {
-	if dst == nil || src == nil || checker == nil {
-		panic(fmt.Sprintf("Cannot accept nil arguments: %v, %v, %v", dst, src, checker))
+	if dst == nil {
+		return errors.New("dst is nil")
 	}
+
+	if src == nil {
+		return errors.New("src is nil")
+	}
+
+	if checker == nil {
+		checker = defaultNameChecker
+	}
+
 	_ = JSONCopy(dst, src)
 	_ = GobCopy(dst, src)
 	dv := IndirectWritableValue(reflect.ValueOf(dst), false)
@@ -43,29 +52,12 @@ func assign(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 			return fmt.Errorf("parse bool: %w", err)
 		}
 		dv.SetBool(b)
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		i, err := ToInt64(src.Interface())
-		if err != nil {
-			return fmt.Errorf("parse int64: %w", err)
-		}
-		dv.SetInt(i)
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		i, err := ToUint64(src.Interface())
-		if err != nil {
-			return fmt.Errorf("parse uint64: %w", err)
-		}
-		dv.SetUint(i)
-	case reflect.Float32, reflect.Float64:
-		i, err := ToFloat64(src.Interface())
-		if err != nil {
-			return fmt.Errorf("parse float64: %w", err)
-		}
-		dv.SetFloat(i)
 	case reflect.String:
-		if src.Kind() != reflect.String {
-			return errors.New("source value is not string")
+		s, err := ToString(src.Interface())
+		if err != nil {
+			return fmt.Errorf("parse string: %w", err)
 		}
-		dv.SetString(src.String())
+		dv.SetString(s)
 	case reflect.Slice:
 		if src.Kind() != reflect.Slice {
 			return errors.New("source value is not slice")
@@ -74,50 +66,46 @@ func assign(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 		for i := 0; i < src.Len(); i++ {
 			err := assign(l.Index(i), src.Index(i), nm)
 			if err != nil {
-				return fmt.Errorf("cannot assign field at index %d: %w", i, err)
+				return fmt.Errorf("cannot assign [%d]: %w", i, err)
 			}
 		}
 		dv.Set(l)
 	case reflect.Map:
-		if k := src.Kind(); k != reflect.Map {
-			return fmt.Errorf("cannot assign %v to map", k)
+		if src.Kind() != reflect.Map {
+			return fmt.Errorf("cannot assign %v to map", src.Kind())
 		}
-		if err := mapToMap(dv, src, nm); err != nil {
-			return fmt.Errorf("cannot assign map to map: %w", err)
-		}
+		return wrapError(mapToMap(dv, src, nm), "mapToMap")
 	case reflect.Struct:
-		err := valueToStruct(dv, src, nm)
-		if err != nil {
-			return fmt.Errorf("assign to struct: %w", err)
-		}
+		return wrapError(valueToStruct(dv, src, nm), "valueToStruct")
 	case reflect.Interface:
 		// if i is a pointer to an interface, then ValueOf(i).Elem().Kind() is reflect.Interface
-		switch ev := dv.Elem(); ev.Kind() {
-		case reflect.Map:
-			if k := src.Kind(); k != reflect.Map {
-				return fmt.Errorf("cannot assign %v to map", k)
-			}
-			pv := reflect.New(ev.Type())
-			err := mapToMap(pv.Elem(), src, nm)
-			if err != nil {
-				return fmt.Errorf("cannot assign map to interface(map): %w", err)
-			}
-			dv.Set(pv.Elem())
-		case reflect.Struct:
-			pv := reflect.New(ev.Type())
-			if err := valueToStruct(pv.Elem(), src, nm); err != nil {
-				return fmt.Errorf("cannot assign to interface(struct): %w", err)
-			}
-			dv.Set(pv.Elem())
-		default:
-			panic(fmt.Sprintf("unknown interface(kind)=%s", ev))
+		pv := reflect.New(dv.Elem().Type())
+		if err := assign(pv.Elem(), src, nm); err != nil {
+			return fmt.Errorf("cannot assign to interface(%v): %w", dv.Elem().Kind(), err)
 		}
+		dv.Set(pv.Elem())
 	default:
-		panic(fmt.Sprintf("unknown kind=%v", dv.Kind()))
-	}
-
-	if dst.Kind() == reflect.Ptr && dst.IsNil() {
-		dst.Set(dv.Addr())
+		if IsIntValue(dv) {
+			i, err := ToInt64(src.Interface())
+			if err != nil {
+				return fmt.Errorf("parse int64: %w", err)
+			}
+			dv.SetInt(i)
+		} else if IsUintValue(dv) {
+			i, err := ToUint64(src.Interface())
+			if err != nil {
+				return fmt.Errorf("parse uint64: %w", err)
+			}
+			dv.SetUint(i)
+		} else if IsFloatValue(dv) {
+			i, err := ToFloat64(src.Interface())
+			if err != nil {
+				return fmt.Errorf("parse float64: %w", err)
+			}
+			dv.SetFloat(i)
+		} else {
+			return fmt.Errorf("unknown kind=%v", dv.Kind())
+		}
 	}
 	return nil
 }
@@ -157,7 +145,6 @@ func valueToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 	default:
 		return fmt.Errorf("src is %v instead of struct or map", k)
 	}
-	return nil
 }
 
 func mapToMap(dst reflect.Value, src reflect.Value, nm NameChecker) error {
