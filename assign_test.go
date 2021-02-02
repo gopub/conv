@@ -1,6 +1,8 @@
 package conv_test
 
 import (
+	"encoding/json"
+	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
 
@@ -145,4 +147,28 @@ func TestAssignJSONToStruct(t *testing.T) {
 		t.Errorf("Expected CreatedAt to be %v instead of %v", tm, i.CreatedAt)
 		t.FailNow()
 	}
+}
+
+type jsonMap map[int]int
+
+func (j *jsonMap) UnmarshalJSON(bytes []byte) error {
+	var m map[string]int
+	err := json.Unmarshal(bytes, &m)
+	if err != nil {
+		return err
+	}
+	for k, v := range m {
+		(*j)[conv.MustInt(k)] = v
+	}
+	return nil
+}
+
+var _ json.Unmarshaler = (*jsonMap)(nil)
+
+func TestAssignMap(t *testing.T) {
+	var dst jsonMap
+	var src = map[string]int{"1": 2}
+	err := conv.Assign(&dst, src)
+	require.NoError(t, err)
+	require.Equal(t, conv.MustJSONString(dst), conv.MustJSONString(src))
 }

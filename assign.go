@@ -2,6 +2,8 @@ package conv
 
 import (
 	"encoding"
+	"encoding/gob"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -27,18 +29,23 @@ func AssignC(dst interface{}, src interface{}, checker NameChecker) error {
 		checker = defaultNameChecker
 	}
 
-	_ = JSONCopy(dst, src)
-	_ = GobCopy(dst, src)
+	func() {
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println(err)
+			}
+		}()
+		_ = JSONCopy(dst, src)
+		_ = GobCopy(dst, src)
+	}()
+
 	dv := IndirectWritableValue(reflect.ValueOf(dst), false)
 	// dv must be a nil pointer or a valid value
 	err := assign(dv, reflect.ValueOf(src), checker)
 	if err != nil {
 		return fmt.Errorf("cannot assign %T to %T: %w", src, dv.Interface(), err)
 	}
-	if err = Validate(dst); err != nil {
-		return fmt.Errorf("cannot validate: %w", err)
-	}
-	return nil
+	return wrapError(Validate(dst), "cannot validate")
 }
 
 // dst is valid value or pointer to value
@@ -149,6 +156,21 @@ func valueToStruct(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 
 func mapToMap(dst reflect.Value, src reflect.Value, nm NameChecker) error {
 	if !src.Type().Key().AssignableTo(dst.Type().Key()) {
+		if dst.CanAddr() {
+			if addr, ok := dst.Addr().Interface().(json.Unmarshaler); ok {
+				if dst.IsNil() {
+					dst.Set(reflect.MakeMap(dst.Type()))
+				}
+				return wrapError(JSONCopy(addr, src.Interface()), "json copy")
+			}
+
+			if addr, ok := dst.Addr().Interface().(gob.GobDecoder); ok {
+				if dst.IsNil() {
+					dst.Set(reflect.MakeMap(dst.Type()))
+				}
+				return wrapError(GobCopy(addr, src.Interface()), "gob copy")
+			}
+		}
 		return fmt.Errorf("cannot assign %s to %s", src.Type().Key(), dst.Type().Key())
 	}
 
